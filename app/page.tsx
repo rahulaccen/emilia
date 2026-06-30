@@ -85,16 +85,16 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen flex flex-col">
+    <main className="min-h-screen flex flex-col bg-gray-50">
       {/* Header */}
-      <header className="border-b border-gray-800 px-6 py-4 flex items-center justify-between">
+      <header className="border-b border-gray-200 bg-white px-6 py-4 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-2">
-          <Linkedin size={20} className="text-blue-400" />
-          <span className="font-semibold text-lg tracking-tight">Emilia</span>
-          <span className="text-xs text-gray-500 ml-1">LinkedIn reshare writer</span>
+          <Linkedin size={20} className="text-blue-600" />
+          <span className="font-semibold text-lg tracking-tight text-gray-900">Emilia</span>
+          <span className="text-xs text-gray-400 ml-1">LinkedIn reshare writer</span>
         </div>
         {(output || postText) && (
-          <button onClick={reset} className="text-xs text-gray-500 hover:text-gray-300 flex items-center gap-1 transition-colors">
+          <button onClick={reset} className="text-xs text-gray-400 hover:text-gray-600 flex items-center gap-1 transition-colors">
             <RotateCcw size={12} /> Reset
           </button>
         )}
@@ -105,9 +105,9 @@ export default function Home() {
         <div className="flex flex-col gap-5 lg:w-1/2">
           {/* Post input */}
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-gray-400">Paste the LinkedIn post</label>
+            <label className="text-sm font-medium text-gray-600">Paste the LinkedIn post</label>
             <textarea
-              className="bg-gray-900 border border-gray-700 rounded-xl p-4 text-sm text-gray-100 placeholder-gray-600 resize-y min-h-48 focus:outline-none focus:border-green-500 transition-colors"
+              className="bg-white border border-gray-300 rounded-xl p-4 text-sm text-gray-900 placeholder-gray-400 resize-y min-h-48 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-colors shadow-sm"
               placeholder="Paste the post content here…"
               value={postText}
               onChange={e => setPostText(e.target.value)}
@@ -116,7 +116,7 @@ export default function Home() {
 
           {/* Tone selector */}
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-gray-400">Tone(s)</label>
+            <label className="text-sm font-medium text-gray-600">Tone(s)</label>
             <div className="flex flex-wrap gap-2">
               {TONES.map(t => (
                 <button
@@ -124,8 +124,8 @@ export default function Home() {
                   onClick={() => toggleTone(t.value)}
                   className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
                     selectedTones.includes(t.value)
-                      ? 'bg-green-500 border-green-500 text-gray-950'
-                      : 'bg-transparent border-gray-700 text-gray-400 hover:border-gray-500'
+                      ? 'bg-green-500 border-green-500 text-white'
+                      : 'bg-white border-gray-300 text-gray-600 hover:border-gray-400 hover:bg-gray-50'
                   }`}
                 >
                   {t.emoji} {t.label}
@@ -136,10 +136,10 @@ export default function Home() {
 
           {/* Optional angle */}
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-gray-400">Your angle <span className="text-gray-600">(optional)</span></label>
+            <label className="text-sm font-medium text-gray-600">Your angle <span className="text-gray-400">(optional)</span></label>
             <input
               type="text"
-              className="bg-gray-900 border border-gray-700 rounded-xl px-4 py-2.5 text-sm text-gray-100 placeholder-gray-600 focus:outline-none focus:border-green-500 transition-colors"
+              className="bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-colors shadow-sm"
               placeholder="e.g. startup founder, operations leader…"
               value={perspective}
               onChange={e => setPerspective(e.target.value)}
@@ -150,27 +150,27 @@ export default function Home() {
           <label className="flex items-center gap-3 cursor-pointer group">
             <div
               onClick={() => setAccenture(v => !v)}
-              className={`relative w-10 h-6 rounded-full transition-colors ${accenture ? 'bg-green-500' : 'bg-gray-700'}`}
+              className={`relative w-10 h-6 rounded-full transition-colors ${accenture ? 'bg-green-500' : 'bg-gray-300'}`}
             >
-              <span className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform ${accenture ? 'translate-x-4' : ''}`} />
+              <span className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white shadow transition-transform ${accenture ? 'translate-x-4' : ''}`} />
             </div>
-            <span className="text-sm text-gray-400 group-hover:text-gray-300 transition-colors">
-              Accenture perspective <span className="text-gray-600">(optional)</span>
+            <span className="text-sm text-gray-600 group-hover:text-gray-800 transition-colors">
+              Accenture perspective <span className="text-gray-400">(optional)</span>
             </span>
           </label>
 
           {/* Error */}
-          {error && <p className="text-sm text-red-400">{error}</p>}
+          {error && <p className="text-sm text-red-500">{error}</p>}
 
           {/* Generate button */}
           <button
             onClick={generate}
             disabled={loading || !postText.trim()}
-            className="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-400 disabled:opacity-40 disabled:cursor-not-allowed text-gray-950 font-semibold rounded-xl py-3 transition-colors"
+            className="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold rounded-xl py-3 transition-colors shadow-sm"
           >
             {loading ? (
               <span className="flex items-center gap-2">
-                <span className="w-4 h-4 border-2 border-gray-950 border-t-transparent rounded-full animate-spin" />
+                <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 Drafting…
               </span>
             ) : (
@@ -187,22 +187,22 @@ export default function Home() {
           {output ? (
             <>
               <div className="flex items-center justify-between">
-                <label className="text-sm font-medium text-gray-400">Your drafts</label>
+                <label className="text-sm font-medium text-gray-600">Your drafts</label>
                 <button
                   onClick={copyAll}
-                  className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-300 transition-colors"
+                  className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-700 transition-colors"
                 >
-                  {copied ? <><Check size={12} className="text-green-400" /> Copied</> : <><Copy size={12} /> Copy all</>}
+                  {copied ? <><Check size={12} className="text-green-500" /> Copied</> : <><Copy size={12} /> Copy all</>}
                 </button>
               </div>
-              <div className="bg-gray-900 border border-gray-700 rounded-xl p-5 text-sm text-gray-200 leading-relaxed whitespace-pre-wrap flex-1 min-h-64">
+              <div className="bg-white border border-gray-200 rounded-xl p-5 text-sm text-gray-800 leading-relaxed whitespace-pre-wrap flex-1 min-h-64 shadow-sm">
                 {output}
-                {loading && <span className="inline-block w-2 h-4 bg-green-400 ml-1 animate-pulse rounded-sm" />}
+                {loading && <span className="inline-block w-2 h-4 bg-green-500 ml-1 animate-pulse rounded-sm" />}
               </div>
             </>
           ) : (
-            <div className="flex-1 min-h-64 bg-gray-900/50 border border-dashed border-gray-800 rounded-xl flex items-center justify-center">
-              <p className="text-gray-600 text-sm text-center px-8">
+            <div className="flex-1 min-h-64 bg-white border border-dashed border-gray-300 rounded-xl flex items-center justify-center shadow-sm">
+              <p className="text-gray-400 text-sm text-center px-8">
                 Paste a post and hit <strong className="text-gray-500">Generate drafts</strong> —<br />your reshare thoughts will appear here live.
               </p>
             </div>
