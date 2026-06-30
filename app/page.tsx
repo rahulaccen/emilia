@@ -107,7 +107,7 @@ export default function Home() {
           <div className="flex flex-col gap-2">
             <label className="text-sm font-medium text-gray-600">Paste the LinkedIn post</label>
             <textarea
-              className="bg-white border border-gray-300 rounded-xl p-4 text-sm text-gray-900 placeholder-gray-400 resize-y min-h-48 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-colors shadow-sm"
+              className="bg-white border border-gray-300 rounded-xl p-4 text-sm text-black placeholder-gray-400 resize-y min-h-48 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors shadow-sm"
               placeholder="Paste the post content here…"
               value={postText}
               onChange={e => setPostText(e.target.value)}
@@ -124,8 +124,8 @@ export default function Home() {
                   onClick={() => toggleTone(t.value)}
                   className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
                     selectedTones.includes(t.value)
-                      ? 'bg-green-500 border-green-500 text-white'
-                      : 'bg-white border-gray-300 text-gray-600 hover:border-gray-400 hover:bg-gray-50'
+                      ? 'bg-purple-600 border-purple-600 text-white'
+                      : 'bg-white border-gray-300 text-black hover:border-gray-400 hover:bg-gray-50'
                   }`}
                 >
                   {t.emoji} {t.label}
@@ -139,7 +139,7 @@ export default function Home() {
             <label className="text-sm font-medium text-gray-600">Your angle <span className="text-gray-400">(optional)</span></label>
             <input
               type="text"
-              className="bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-colors shadow-sm"
+              className="bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-black placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors shadow-sm"
               placeholder="e.g. startup founder, operations leader…"
               value={perspective}
               onChange={e => setPerspective(e.target.value)}
@@ -197,7 +197,7 @@ export default function Home() {
               </div>
               <div className="bg-white border border-gray-200 rounded-xl p-5 text-sm text-gray-800 leading-relaxed whitespace-pre-wrap flex-1 min-h-64 shadow-sm">
                 {output}
-                {loading && <span className="inline-block w-2 h-4 bg-green-500 ml-1 animate-pulse rounded-sm" />}
+                {loading && <span className="inline-block w-2 h-4 bg-purple-600 ml-1 animate-pulse rounded-sm" />}
               </div>
             </>
           ) : (
