@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'mixtral-8x7b-32768',
+        model: 'openai/gpt-oss-20b',
         messages: [{ role: 'user', content: buildPrompt(postText, tones, perspective ?? '') }],
         stream: false,
         max_tokens: 800,
