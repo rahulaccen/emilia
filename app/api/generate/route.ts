@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
+        model: 'mixtral-8x7b-32768',
         messages: [{ role: 'user', content: buildPrompt(postText, tones, perspective ?? '') }],
         stream: false,
         max_tokens: 800,
