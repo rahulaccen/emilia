@@ -69,7 +69,6 @@ export default function Home() {
   };
 
   const reset = () => {
-    abortRef.current?.abort();
     setPostText(''); setOutput(''); setError(''); setLoading(false);
     setSelectedTones(['professional', 'thought-provoking']);
     setAccenture(false); setPerspective('');
