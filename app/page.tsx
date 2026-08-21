@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { Sparkles, Copy, Check, RotateCcw, Linkedin } from 'lucide-react';
 
 const TONES = [
@@ -20,7 +20,6 @@ export default function Home() {
   const [loading, setLoading]             = useState(false);
   const [error, setError]                 = useState('');
   const [copied, setCopied]               = useState(false);
-  const abortRef                          = useRef<AbortController | null>(null);
 
   const toggleTone = (t: string) => {
     setSelectedTones(prev =>
@@ -33,9 +32,6 @@ export default function Home() {
   const generate = async () => {
     if (!postText.trim()) { setError('Please paste a LinkedIn post first.'); return; }
     setError(''); setOutput(''); setLoading(true);
-    abortRef.current?.abort();
-    const ctrl = new AbortController();
-    abortRef.current = ctrl;
 
     const effectivePerspective = [
       perspective.trim(),
@@ -47,20 +43,15 @@ export default function Home() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ postText: postText.trim(), tones: selectedTones, perspective: effectivePerspective }),
-        signal: ctrl.signal,
       });
 
-      if (!res.ok) throw new Error(`Server error ${res.status}`);
-
-      const reader = res.body!.getReader();
-      const decoder = new TextDecoder();
-      let result = '';
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        result += decoder.decode(value, { stream: true });
-        setOutput(result);
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || `Server error ${res.status}`);
       }
+
+      const text = await res.text();
+      setOutput(text);
     } catch (e: unknown) {
       if ((e as Error).name !== 'AbortError') {
         setError('Something went wrong. Please try again.');

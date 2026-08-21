@@ -1,4 +1,3 @@
-import Groq from 'groq-sdk';
 import { NextRequest } from 'next/server';
 
 export const runtime = 'nodejs';
@@ -55,38 +54,32 @@ export async function POST(req: NextRequest) {
       return new Response(JSON.stringify({ error: 'GROQ_API_KEY not configured' }), { status: 500 });
     }
 
-    const groq = new Groq({ apiKey });
-
-    const stream = await groq.chat.completions.create({
-      model: 'llama3-70b-8192',
-      messages: [{ role: 'user', content: buildPrompt(postText, tones, perspective ?? '') }],
-      stream: true,
-      max_tokens: 800,
-      temperature: 0.8,
-    });
-
-    const encoder = new TextEncoder();
-    const readable = new ReadableStream({
-      async start(controller) {
-        try {
-          for await (const chunk of stream) {
-            const text = chunk.choices[0]?.delta?.content ?? '';
-            if (text) controller.enqueue(encoder.encode(text));
-          }
-        } catch (streamErr) {
-          console.error('Stream error:', streamErr);
-        } finally {
-          controller.close();
-        }
-      },
-    });
-
-    return new Response(readable, {
+    const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
       headers: {
-        'Content-Type': 'text/plain; charset=utf-8',
-        'Transfer-Encoding': 'chunked',
-        'X-Content-Type-Options': 'nosniff',
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
       },
+      body: JSON.stringify({
+        model: 'llama3-70b-8192',
+        messages: [{ role: 'user', content: buildPrompt(postText, tones, perspective ?? '') }],
+        stream: false,
+        max_tokens: 800,
+        temperature: 0.8,
+      }),
+    });
+
+    if (!groqRes.ok) {
+      const errText = await groqRes.text();
+      console.error('Groq API error:', groqRes.status, errText);
+      return new Response(JSON.stringify({ error: `Groq API error: ${groqRes.status}` }), { status: 500 });
+    }
+
+    const data = await groqRes.json();
+    const text = data.choices?.[0]?.message?.content ?? '';
+
+    return new Response(text, {
+      headers: { 'Content-Type': 'text/plain; charset=utf-8' },
     });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Unknown error';
