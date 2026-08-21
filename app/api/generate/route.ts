@@ -1,7 +1,7 @@
 import Groq from 'groq-sdk';
 import { NextRequest } from 'next/server';
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 const TONES: Record<string, string> = {
   professional:       'measured, business-focused language with a clear value lens',
@@ -43,46 +43,54 @@ Write only the options, no preamble.`;
 }
 
 export async function POST(req: NextRequest) {
-  const { postText, tones, perspective } = await req.json();
+  try {
+    const { postText, tones, perspective } = await req.json();
 
-  if (!postText || !tones?.length) {
-    return new Response(JSON.stringify({ error: 'Missing postText or tones' }), { status: 400 });
-  }
+    if (!postText || !tones?.length) {
+      return new Response(JSON.stringify({ error: 'Missing postText or tones' }), { status: 400 });
+    }
 
-  const apiKey = process.env.GROQ_API_KEY;
-  if (!apiKey) {
-    return new Response(JSON.stringify({ error: 'GROQ_API_KEY not configured' }), { status: 500 });
-  }
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey) {
+      return new Response(JSON.stringify({ error: 'GROQ_API_KEY not configured' }), { status: 500 });
+    }
 
-  const groq = new Groq({ apiKey });
+    const groq = new Groq({ apiKey });
 
-  const stream = await groq.chat.completions.create({
-    model: 'llama-3.3-70b-versatile',
-    messages: [{ role: 'user', content: buildPrompt(postText, tones, perspective ?? '') }],
-    stream: true,
-    max_tokens: 800,
-    temperature: 0.8,
-  });
+    const stream = await groq.chat.completions.create({
+      model: 'llama3-70b-8192',
+      messages: [{ role: 'user', content: buildPrompt(postText, tones, perspective ?? '') }],
+      stream: true,
+      max_tokens: 800,
+      temperature: 0.8,
+    });
 
-  const encoder = new TextEncoder();
-  const readable = new ReadableStream({
-    async start(controller) {
-      try {
-        for await (const chunk of stream) {
-          const text = chunk.choices[0]?.delta?.content ?? '';
-          if (text) controller.enqueue(encoder.encode(text));
+    const encoder = new TextEncoder();
+    const readable = new ReadableStream({
+      async start(controller) {
+        try {
+          for await (const chunk of stream) {
+            const text = chunk.choices[0]?.delta?.content ?? '';
+            if (text) controller.enqueue(encoder.encode(text));
+          }
+        } catch (streamErr) {
+          console.error('Stream error:', streamErr);
+        } finally {
+          controller.close();
         }
-      } finally {
-        controller.close();
-      }
-    },
-  });
+      },
+    });
 
-  return new Response(readable, {
-    headers: {
-      'Content-Type': 'text/plain; charset=utf-8',
-      'Transfer-Encoding': 'chunked',
-      'X-Content-Type-Options': 'nosniff',
-    },
-  });
+    return new Response(readable, {
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Transfer-Encoding': 'chunked',
+        'X-Content-Type-Options': 'nosniff',
+      },
+    });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    console.error('API error:', message);
+    return new Response(JSON.stringify({ error: message }), { status: 500 });
+  }
 }
